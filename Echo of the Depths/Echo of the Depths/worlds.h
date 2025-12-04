@@ -10,11 +10,20 @@ using sf::RenderWindow;
 
 class world_assets {
 public :
+	// camera
+	float window_half_width, window_half_height;
+	float map_width = 5000.f, map_height = 5000.f;
+	sf::View cam;
+
+	// visuals : chunks & textures & etc
 	std::vector<std::vector<Texture>> chunk_textures;
 	std::vector <std::vector<Chunk>> chunks;
 	std::vector<std::vector<sf::Image>> chunk_mask_imgs;
 	Locations new_location = Locations::hub;
-	sf::View cam;
+	sf::Clock delta_clock;
+
+	bool all_is_locked = false;
+	
 
 	virtual bool load_chunk_textures() = 0;
 	virtual bool load_chunk_mask() = 0;
@@ -95,8 +104,9 @@ public :
 	}
 
 	void update_camera(RenderWindow& window, MainPlayer& player) {
-		cam.setCenter(player.sprite.getPosition().x, player.sprite.getPosition().y);
-		window.setView(cam);
+		float camX = std::clamp(player.sprite.getPosition().x, window_half_width, map_width - window_half_width);
+		float camY = std::clamp(player.sprite.getPosition().y, window_half_height, map_height - window_half_height);
+		cam.setCenter(camX, camY);
 	}
 
 	void update_chunks_visible(MainPlayer& player) {
@@ -139,7 +149,10 @@ public :
 
 class Forests_of_echo_assets : public world_assets {
 public :
-	Forests_of_echo_assets() {
+	Forests_of_echo_assets(RenderWindow &window) {
+		window_half_width = window.getSize().x / 2;
+		window_half_height = window.getSize().y / 2;
+
 		chunks.resize(5);
 		chunk_textures.resize(5);
 		chunk_mask_imgs.resize(5);
@@ -153,12 +166,16 @@ public :
 	bool load_chunk_textures() override {
 		for (int raw = 0; raw < chunk_textures.size(); raw++) {
 			for (int column = 0; column < chunk_textures[raw].size(); column++) {
-				if (!chunk_textures[raw][column].loadFromFile("textures/chaptwo/forests_of_echo/chunks/chunk/" + std::to_string(raw + 1) + '_' + std::to_string(column + 1) + ".png")) {
+				if (!chunk_textures[raw][column].loadFromFile("textures/chaptwo/forests_of_echo/chunks/chunk" + std::to_string(raw + 1) + '_' + std::to_string(column + 1) + ".png")) {
 					return false;
 				}
 			}
 		}
 		return true;
+	}
+
+	bool load_chunk_mask() override {
+		return false;
 	}
 
 	void update_and_draw_all(MainPlayer& player, RenderWindow& window, SwordSlashEffect& swordEffect) const override {

@@ -20,6 +20,7 @@
 #include "Chunk.h"
 #include "Hub_assets.h"
 #include "enums.h"
+#include "worlds.h"
 
 using std::vector;
 using sf::RenderWindow;
@@ -998,6 +999,97 @@ public:
 			}
 		}
 };
+
+GameState forests_of_echo_lvl(RenderWindow& window, MainPlayer& player, sf::Font& font) {
+	player.sprite.setPosition(559.f, 4820.f);
+	player.maxHP = 115;
+	player.current_health = 115;
+	player.update_all_(font);
+	
+	SwordSlashEffect swordEffect;
+
+	Forests_of_echo_assets assets(window);
+	if (assets.load_chunk_textures()) {
+		assets.chunk_setTextures();
+	}
+	else {
+		return Exit_gs;
+	}
+
+	while (window.isOpen()) {
+		Event event;
+		while (window.pollEvent(event)) {
+			if (event.type == Event::KeyPressed) {
+				if (event.key.code == Keyboard::Escape) {
+					window.close();
+				}
+			}
+		}
+
+	/*	if (!pause.isPaused) {*/
+			Vector2f move(0.f, 0.f);
+			float dt = assets.delta_clock.restart().asSeconds();
+			player.moving = false;
+
+			player.handleMovementInput(assets.all_is_locked, move, dt);
+
+			sf::Vector2f moveX(move.x, 0.f);
+			player.sprite.move(moveX);
+			if (!assets.update_collisions_mask(player, moveX) || !assets.update_collisions_lvl(player)) {
+				player.sprite.move(-moveX);
+			}
+
+			sf::Vector2f moveY(0.f, move.y);
+			player.sprite.move(moveY);
+			if (!assets.update_collisions_mask(player, moveY) || !assets.update_collisions_lvl(player)) {
+				player.sprite.move(-moveY);
+			}
+
+			assets.update_chunks_visible(player);
+			assets.update_camera(window, player);
+
+		/*	if (temp_holder && temp_holder->isDraggin) {
+				temp_holder->sprite.setPosition(mouse_posui + temp_holder->offset);
+			}
+			if (temp_armor && temp_armor->isDraggin) {
+				temp_armor->sprite.setPosition(mouse_posui + temp_armor->offset);
+			}*/
+
+			window.clear();
+
+			window.setView(assets.cam);
+			assets.draw_visible_chunks(window);
+			player.drawEffectsVisuals(window, player);
+			assets.update_and_draw_all(player, window, swordEffect);
+
+		
+
+			window.setView(window.getDefaultView());
+			player.draw_inventory(window);
+			/*window.draw(pause.pause_button_sprite);*/
+
+			if (player.activeItem && player.activeItem->ability) {
+				if (auto* read_book = dynamic_cast<ReadBook*>(player.activeItem->ability.get())) {
+					read_book->draw(window, player);
+				}
+			}
+			player.updateAllEffects(nullptr, nullptr, nullptr);
+			player.draw_cooldowns(window);
+
+			player.draw_health(window);
+			/*player.draw_status_bar(mouse_pos, window);
+
+			if (temp_holder) {
+				window.draw(temp_holder->sprite);
+			}
+			if (temp_armor) {
+				window.draw(temp_armor->sprite);
+			}*/
+		/*}*/
+			window.display();
+	}
+
+}
 
 GameState Hub(RenderWindow& window, MainPlayer& player, Locations& current_location, GameState state, sf::Font& font, Pause &pause, ItemManager& item_manager) {
 	player.sprite.setPosition(2455.f, 2858.f);
@@ -3760,7 +3852,7 @@ int main() {
 	}
 
 	GameState gs = GameState::Menu_gs;
-	Locations current_location = Locations::hub;
+	Locations current_location = Locations::forests_of_echo;
 
 	while (window.isOpen()) {
 		if (gs == GameState::Playing) {
@@ -3780,11 +3872,14 @@ int main() {
 			case Locations::hub:
 				gs = Hub(window, player, current_location, gs, pixel_game, pause, item_manager);
 				break;
+				
+			case Locations::forests_of_echo:
+				gs = forests_of_echo_lvl(window, player, pixel_game);
+				break;
 			}
 		}
 		else if (gs == GameState::Menu_gs) {
 			MenuState result = Menu(window, current_location);
-
 			if (result == Exit)
 				window.close();
 			else if (result == Play)

@@ -30,6 +30,7 @@
     <ClInclude Include="chest.h" />
     <ClInclude Include="Chunk.h" />
     <ClInclude Include="enums.h" />
+    <ClInclude Include="worlds.h" />
     <ClInclude Include="Hub_assets.h" />
     <ClInclude Include="Messages.h" />
     <ClInclude Include="Evil.h" />

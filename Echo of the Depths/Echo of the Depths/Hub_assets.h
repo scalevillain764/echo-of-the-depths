@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "Chunk.h"
+#include "enums.h"
 
 class MainPlayer;
 class SwordSlashEffect;

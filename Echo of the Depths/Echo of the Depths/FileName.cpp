@@ -1297,7 +1297,6 @@ GameState Hub(RenderWindow& window, MainPlayer& player, Locations& current_locat
 			// last_rec
 
 		}
-
 		else {
 			window.draw(pause.pause_screen_sprite);
 			window.draw(pause.resume.button_sprite);

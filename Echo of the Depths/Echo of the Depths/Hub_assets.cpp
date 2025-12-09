@@ -254,7 +254,13 @@ bool Hub_assets:: update_collisions_mask(MainPlayer& player, sf::Vector2f& move)
 		if (ly < 0 || ly >= ch.chunk_mask.getSize().y) continue;
 
 		sf::Color px = ch.chunk_mask.getPixel(lx, ly);
-		if (px.r <= 128) {
+		/*if (px.r <= 128) {
+			return false;
+		}*/
+		/*if (px == Color::Black) {
+			return false;
+		}*/
+		if (px.r < 5 && px.g < 5 && px.b < 5) {
 			return false;
 		}
 	}

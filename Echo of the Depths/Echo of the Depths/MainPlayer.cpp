@@ -489,7 +489,10 @@ void MainPlayer:: update_all_(Font& font) {
 	make_inventory();
 	setTextsettings(font);
 	restore_items_from_copy();
+
 	sprite.setScale(0.48f, 0.48f);
+	//sprite.getGlobalBounds().width = 139 * 0.48f;
+
 	StartMenuY = 275;
 	isDead = false;
 	right_leg = true;
@@ -499,7 +502,6 @@ void MainPlayer:: update_all_(Font& font) {
 	is_watching_left = true;
 	moving = false;
 	setTextureFrontRight();
-	/*current_health = cur_health_copy;*/
 }
 // update
 

@@ -1002,7 +1002,7 @@ public:
 
 GameState forests_of_echo_lvl(RenderWindow& window, MainPlayer& player, sf::Font& font) {
 	/*player.sprite.setPosition(559.f, 4820.f);*/
-	player.sprite.setPosition(3490.f, 1889.f);
+	player.sprite.setPosition(2723.f, 3874.f);
 	player.maxHP = 115;
 	player.current_health = 115;
 	player.update_all_(font);

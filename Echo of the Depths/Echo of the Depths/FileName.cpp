@@ -1002,7 +1002,7 @@ public:
 
 GameState forests_of_echo_lvl(RenderWindow& window, MainPlayer& player, sf::Font& font) {
 	/*player.sprite.setPosition(559.f, 4820.f);*/
-	player.sprite.setPosition(2723.f, 3874.f);
+	player.sprite.setPosition(3663.f, 2128.f);
 	player.maxHP = 115;
 	player.current_health = 115;
 	player.update_all_(font);
@@ -1010,6 +1010,7 @@ GameState forests_of_echo_lvl(RenderWindow& window, MainPlayer& player, sf::Font
 	SwordSlashEffect swordEffect;
 
 	Forests_of_echo_assets assets(window);
+
 	if (assets.load_chunk_textures() && assets.load_chunk_mask()) {
 		assets.chunk_setTextures();
 	}
